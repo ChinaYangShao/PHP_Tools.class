@@ -35,34 +35,41 @@ class MySQLDB{
 		// 设置数据库编码
 		$this->setCharset($this->charset);
 		// 选定数据库
-		$this->useDb($this->dbName);
+		if (!empty($this->dbName)) {
+			$this->useDb($this->dbName);
+		}
+		
 	}
 	// 禁止克隆
 	private function __clone(){}
 	//链接数据库
 	private function config(){
-		if (preg_match('/^\d+$/i', $this->port)) {
+		if (!preg_match('/^\d+$/i', $this->port)) {
+			die("端口号格式不正确！");
+		}
+		if (!empty($this->dbName)) {
 			// echo "是数字";
 			$this->link = mysqli_connect($this->host,$this->userName,$this->password,$this->dbName,$this->port) or die("链接数据库失败！");
 
 		}else{
 			// echo "不是数字";
-			$this->link = mysqli_connect($this->host,$this->userName,$this->password,$this->dbName) or die("链接数据库失败！");
+			$this->link = mysqli_connect($this->host,$this->userName,$this->password,'',$this->port) or die("链接数据库失败！");
 		}
 		// var_dump($link);
 		// return $this->link;
 	}
 	// 设置数据库编码
 	public function setCharset($charset){
-		return mysqli_set_charset($this->link,$charset);
+		return mysqli_set_charset($this->link,$charset) or die("设置数据库编码执行失败");
 	}
 	// 选定数据库
 	public function useDb($dbName){
-		return mysqli_select_db($this->link,$dbName);
+
+		return mysqli_select_db($this->link,$dbName) or die("选定数据库执行失败");
 	}
 	// 执行sql语句
-	public function sql($sql){
-		return mysqli_query($this->link,$sql);
+	public function query($sql){
+		return mysqli_query($this->link,$sql) or die("sql语句执行失败");
 	}
 
 
@@ -71,7 +78,7 @@ class MySQLDB{
 /* 以下是使用示例  */
 // $config = array(
 // 	'host' => 'localhost', 
-// 	'port' => '', 
+// 	'port' => '3306', 
 // 	'userName' => 'root', 
 // 	'password' => '', 
 // 	'charset' => 'utf8', 
@@ -81,6 +88,6 @@ class MySQLDB{
 // var_dump($link);
 // $link->useDb("userdb");
 // $sql = "show databases;";
-// $link->sql($sql);
+// $link->query($sql);
 
 ?>
