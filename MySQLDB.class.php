@@ -42,19 +42,14 @@ class MySQLDB{
 	}
 	// 禁止克隆
 	private function __clone(){}
+	// 禁止序列化
+	private function __sleep(){}
 	//链接数据库
 	private function config(){
 		if (!preg_match('/^\d+$/i', $this->port)) {
 			die("端口号格式不正确！");
 		}
-		if (!empty($this->dbName)) {
-			// echo "是数字";
 			$this->link = mysqli_connect($this->host,$this->userName,$this->password,$this->dbName,$this->port) or die("链接数据库失败！");
-
-		}else{
-			// echo "不是数字";
-			$this->link = mysqli_connect($this->host,$this->userName,$this->password,'',$this->port) or die("链接数据库失败！");
-		}
 		// var_dump($link);
 		// return $this->link;
 	}
@@ -89,5 +84,5 @@ class MySQLDB{
 // $link->useDb("userdb");
 // $sql = "show databases;";
 // $link->query($sql);
-
+// serialize($link); // 测试序列化是否被禁止
 ?>
